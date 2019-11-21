@@ -1,12 +1,14 @@
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Dice {
+
     private final String[] diceElements = {"1", "2", "3", "Energy Cube", "Smash", "Heart"};
-    private ArrayList<String> diceRoll;
+    private ArrayList<String> dice;
+    private int count;
     Dice() {
-        diceRoll = new ArrayList<String>();
+        dice = new ArrayList<String>();
+        count = 0;
     }
 
     //This function rolls the dice
@@ -18,19 +20,25 @@ public class Dice {
 
         for (int i = 0; i <= length; i++) {
             newNumber = randNumber.nextInt(6);
-            diceRoll.add(diceElements[newNumber]);
+            dice.add(diceElements[newNumber]);
         }
-        return diceRoll;
+        return dice;
     }
 
-    public void resolveDice() {
-        System.out.println("Which dice do you want to keep?");
-        boolean check = true;
-        while (check) {
 
-        }
-        Scanner in = new Scanner(System.in);
-
-    }
+//    //This will remove any dice from the roll if the user wants to reroll
+//    public void resolveDice(int removeRoll) {
+//        count++;
+//
+//        if (count != 3) {
+//            dice.remove(removeRoll - 1);
+//
+//        }
+//        else {
+//            System.out.println("You cannot reroll anymore dice");
+//        }
+//
+//
+//    }
 
 }
