@@ -1,4 +1,6 @@
-public class Monster{ 
+import java.util.ArrayList;
+
+public class Monster{
 
     private int health; 
     private String monsterName;
@@ -47,5 +49,16 @@ public class Monster{
     public int getVictoryPoints() {
         return victoryPoints;
     }
+
+//    public ArrayList<String> getMonsterList() {
+//        ArrayList<String> monsters = new ArrayList<String>();
+//        monsters.add("Alienoid");
+//        monsters.add("Cyber Bunny");
+//        monsters.add("Giga Zaur");
+//        monsters.add("Kraken");
+//        monsters.add("Meka Dragon");
+//        monsters.add("The King");
+//        return monsters;
+//    }
     
 }
