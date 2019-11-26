@@ -66,8 +66,38 @@ public class PlayGame {
         System.out.println(deck.dealPowerCard().getPowerCardName());
         System.out.println(deck.dealPowerCard().getPowerCardName());
 
+        System.out.println("The player who rolls the most smashes starts first");
+        Dice diceRoll = new Dice();
+        int maxSmashCount = 0;
+        String maxMonster = "";
+        for (int i = 0; i < monstersInGame.size(); i++) {
+            int smashCount = 0;
+            diceRoll.rollDice();
+            System.out.println("Player " + (i + 1) + "'s monster " + monstersInGame.get(i).getName() +  " rolls " + diceRoll.returnDice());
 
+            ArrayList<String> rollDice = diceRoll.returnDice();
 
+            for (int j = 0; j < rollDice.size(); j++ ) {
+
+               if (rollDice.get(j).equals("Smash")) {
+                   smashCount++;
+               }
+               if (smashCount > maxSmashCount) {
+                   maxSmashCount = smashCount;
+                   maxMonster = monstersInGame.get(i).getName();
+               }
+
+               else if (smashCount == maxSmashCount) {
+
+               }
+            }
+
+            diceRoll.clearDice();
+        }
+
+        System.out.println("This monster goes first! " + maxMonster);
+
+        //TODO: Add tokens
 
 
 

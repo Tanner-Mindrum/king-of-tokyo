@@ -12,7 +12,7 @@ public class Dice {
     }
 
     //This function rolls the dice
-    public ArrayList<String> rollDice() {
+    public void rollDice() {
         //I run through the diceElements array and create
         int length = diceElements.length - 1;
         Random randNumber = new Random();
@@ -22,9 +22,14 @@ public class Dice {
             newNumber = randNumber.nextInt(6);
             dice.add(diceElements[newNumber]);
         }
-        return dice;
+    }
+    public void clearDice() {
+        dice.clear();
     }
 
+    public ArrayList<String> returnDice() {
+        return dice;
+    }
 
 //    //This will remove any dice from the roll if the user wants to reroll
 //    public void resolveDice(int removeRoll) {

@@ -10,7 +10,7 @@ public class Deck {
 
     // Default constructor initializes instance variables
     public Deck() {
-        csvPath = "C:/CECS 343/343-KingOfTokyo-HTT/KingOfTokyo/src/cardList.csv";
+        csvPath = "C:/Users/tymee/IdeaProjects/king-of-tokyo/KingOfTokyo/src/cardList.csv";
         line = "";
         csvSplitter = ",";
         deck = new ArrayList<>();
