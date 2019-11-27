@@ -89,7 +89,7 @@ public class PlayGame {
         int poisonToken = 12;
 
         // Determine which player goes first
-        System.out.println("\nThe player who rolls the most smashes goes first.");
+        System.out.println("\nThe player who rolls the most smashes goes first.\n");
         Dice diceRoll = new Dice();
         ArrayList<Integer> smashCounts = new ArrayList<Integer>();
         ArrayList<Monster> monstersDiceRoll = new ArrayList<Monster>(monstersInGame);
