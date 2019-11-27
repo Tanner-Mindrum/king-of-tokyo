@@ -122,9 +122,9 @@ public class PlayGame {
                 diceRoll.clearDice();  // Clear dice for next roll
             }
 
-            int removeCount = 0;  // Used to work with lists; if element is removed, entire list length decreases
+            int removeCount = 0;  // If element is removed, entire list length decreases
             /* Remove monsters who do not have the highest dice roll. If there is one left, we've found the highest
-             roller! Otherwise, loop again. */
+             roller! Otherwise, while loop again. */
             for (int i = 0; i < smashCounts.size(); i++) {
                 if (smashCounts.get(i) != maxSmashCount) {
                     monstersDiceRoll.remove(i - removeCount);
