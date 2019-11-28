@@ -153,7 +153,65 @@ public class PlayGame {
             System.out.println(i+1 + " - " + finalMonstersInGame.get(i).getName());
         }
 
-        // TODO: BEGIN GAMEPLAY LOOP
+        int turn = 0;
+        ArrayList<Monster> tokyo = new ArrayList<Monster>();
+        System.out.println("\nThe game begins!\n");  // Play gong sound
+        while (true) {
+
+            // TURN OVERVIEW:
+            // 1. Roll Dice - a player can roll the dice 3 times
+            // 2. Resolve Dice
+            // 3. Enter Tokyo
+            // 4. Buy Power Cards
+            // 5. End turn
+            System.out.println("\n" + finalMonstersInGame.get(turn).getName() + " it is your turn!");
+
+            /* ~ 1. Roll dice ~ */
+            int rollCount = 0;
+            ArrayList<String> finalDice = new ArrayList<String>();  // Hold the contents of their desired dice
+            while (rollCount < 3) {
+
+                diceRoll.rollDice();
+                System.out.println(finalMonstersInGame.get(turn).getName() + " rolls "
+                        + diceRoll.returnDice());
+
+                System.out.println("\nSelect which dice you'd like to keep (enter number in comma separated list): ");
+                for (int i = 0; i < diceRoll.returnDice().size() + 1; i++) {
+                    if (i != 6) {
+                        System.out.println(i + 1 + ". " + diceRoll.returnDice().get(i));
+                    }
+                    else {
+                        System.out.println(i + 1 + ". Keep all");
+                    }
+                }
+
+                String diceList = input.nextLine();
+                boolean quitFlag = false;
+                for (int i = 0; i < diceList.length(); i++) {
+                    if (Character.isDigit(diceList.charAt(i))) {
+                        if (diceList.charAt(i) == "7") {
+                            // TODO: tanner will complete this
+                        }
+                    }
+                }
+
+
+                diceRoll.clearDice();
+                rollCount++;
+            }
+
+            /* ~ 3. Enter Tokyo ~ */
+            if (tokyo.size() == 0) {
+                tokyo.add(finalMonstersInGame.get(turn));
+            }
+            System.out.println("Currently in Tokyo:");
+            for (Monster m : tokyo) {
+                System.out.println(m.getName());
+            }
+
+            break;
+
+        }
     }
 
     public static boolean isNumber(String userInput) {
