@@ -23,6 +23,15 @@ public class Dice {
             dice.add(diceElements[newNumber]);
         }
     }
+
+    // Rolls dice when number of black dice being rolled isn't equal to 6
+    public void rollModifiedDice(ArrayList<String> modifiedDice) {
+        Random randNum = new Random();
+        for (String s : modifiedDice) {
+            dice.add(modifiedDice.get(randNum.nextInt(modifiedDice.size())));
+        }
+    }
+
     public void clearDice() {
         dice.clear();
     }

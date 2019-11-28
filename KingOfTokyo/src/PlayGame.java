@@ -159,7 +159,7 @@ public class PlayGame {
         while (true) {
 
             // TURN OVERVIEW:
-            // 1. Roll Dice - a player can roll the dice 3 times
+            // 1. Roll Dice - a player can roll the dice 3 times TODO: tanner will complete this
             // 2. Resolve Dice
             // 3. Enter Tokyo
             // 4. Buy Power Cards
@@ -175,7 +175,7 @@ public class PlayGame {
                 System.out.println(finalMonstersInGame.get(turn).getName() + " rolls "
                         + diceRoll.returnDice());
 
-                System.out.println("\nSelect which dice you'd like to keep (enter number in comma separated list): ");
+                System.out.println("\nSelect which dice you'd like to keep (enter numbers in comma separated list): ");
                 for (int i = 0; i < diceRoll.returnDice().size() + 1; i++) {
                     if (i != 6) {
                         System.out.println(i + 1 + ". " + diceRoll.returnDice().get(i));
@@ -189,12 +189,18 @@ public class PlayGame {
                 boolean quitFlag = false;
                 for (int i = 0; i < diceList.length(); i++) {
                     if (Character.isDigit(diceList.charAt(i))) {
-                        if (diceList.charAt(i) == "7") {
-                            // TODO: tanner will complete this
+                        if (diceList.charAt(i) == '7') {
+                            quitFlag = true;
+                        }
+                        else {
+                            finalDice.add(diceRoll.returnDice().get(i));
                         }
                     }
                 }
 
+                if (quitFlag) {
+                    break;
+                }
 
                 diceRoll.clearDice();
                 rollCount++;
