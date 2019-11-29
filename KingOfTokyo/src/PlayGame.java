@@ -159,7 +159,7 @@ public class PlayGame {
         while (true) {
 
             // TURN OVERVIEW:
-            // 1. Roll Dice - a player can roll the dice 3 times
+            // 1. Roll Dice - a player can roll the dice 3 times [DONE]
             // 2. Resolve Dice
             // 3. Enter Tokyo
             // 4. Buy Power Cards
