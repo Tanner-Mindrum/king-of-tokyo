@@ -298,6 +298,61 @@ public class PlayGame {
             System.out.println(finalDice);
             System.out.println("-----------------------");
             /* ~ 1. END roll dice ~ */
+            /* ~ 2. Resolve dice ~ */
+            int ones = 0;
+            int twos = 0;
+            int threes = 0;
+            int victoryPoints = 0;
+            int energyCount = 0;
+            for (int i = 0; i < finalDice.size(); i++) {
+                String temp = finalDice.get(i);
+                if (isNumber(temp)) {
+
+                    if (temp.equals("1")) {
+                        ones++;
+                    } else if (temp.equals("2")) {
+                        twos++;
+                    } else if (temp.equals("3")) {
+                        threes++;
+                    }
+                }
+                else if (temp.equals("Energy Cube")) {
+                    energyCount++;
+                }
+
+//                if (threeOfAKind >= 3 && isNumber(temp)) {
+//                    victoryPoints += Integer.parseInt(temp);
+//                    threeOfAKind = threeOfAKind - 3;
+//                    if (threeOfAKind > 0) {
+//                        victoryPoints += threeOfAKind * Integer.parseInt(temp);
+//                    }
+//                }
+
+            }
+
+            if (ones >= 3) {
+                victoryPoints += 1;
+                ones -= 3;
+                if (ones > 0) {
+                    victoryPoints += ones;
+                }
+            }
+            if (twos >= 3 ) {
+                victoryPoints += 2;
+                twos -= 3;
+                if (twos > 0) {
+                    victoryPoints += twos * 2;
+                }
+            }
+            if (threes >= 3) {
+                victoryPoints += 3;
+                threes -= 3;
+
+                if (threes > 0) {
+                    victoryPoints += threes * 3;
+                }
+            }
+            finalMonstersInGame.get(turn).setVictoryPoints(victoryPoints);
 
 
             /* ~ 3. Enter Tokyo ~ */
