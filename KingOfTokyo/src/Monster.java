@@ -8,7 +8,7 @@ public class Monster{
     private int victoryPoints;
 
     public Monster() {
-        health = 0;
+        health = 10;
         monsterName = "";
         monsterLocation = false;
         victoryPoints = 0;
