@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
@@ -87,6 +88,7 @@ public class PlayGame {
         int mimicToken = 1;
         int shrinkToken = 12;
         int poisonToken = 12;
+        int energyPool = 50;
 
         // Determine which player goes first
         System.out.println("\nThe player who rolls the most smashes goes first.\n");
@@ -154,7 +156,7 @@ public class PlayGame {
         }
 
         int turn = 0;
-        ArrayList<Monster> tokyo = new ArrayList<Monster>();
+
         System.out.println("\nThe game begins!");  // Play gong sound
         while (true) {
 
@@ -298,12 +300,40 @@ public class PlayGame {
             System.out.println(finalDice);
             System.out.println("-----------------------");
             /* ~ 1. END roll dice ~ */
-            /* ~ 2. Resolve dice ~ */
+
+            /* ~ 2. Enter Tokyo ~ */
+            boolean inTokyo = false;
+            for (Monster m : finalMonstersInGame) {
+                if (m.getMonsterLocation()) {
+                    inTokyo = true;
+
+                }
+
+            }
+
+            if (!inTokyo) {
+                finalMonstersInGame.get(turn).setMonsterLocation(true);
+
+            }
+            /* ~ 3. Resolve dice ~ */
+            finalDice.clear();
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+            finalDice.add("Smash");
+           // finalDice.add("Smash");
             int ones = 0;
             int twos = 0;
             int threes = 0;
             int victoryPoints = 0;
             int energyCount = 0;
+            int smashCount = 0;
+
             for (int i = 0; i < finalDice.size(); i++) {
                 String temp = finalDice.get(i);
                 if (isNumber(temp)) {
@@ -316,18 +346,22 @@ public class PlayGame {
                         threes++;
                     }
                 }
-                else if (temp.equals("Energy Cube")) {
+                else if (temp.equals("Energy Cube") && energyPool > 0) {
                     energyCount++;
+                    energyPool--;
                 }
 
-//                if (threeOfAKind >= 3 && isNumber(temp)) {
-//                    victoryPoints += Integer.parseInt(temp);
-//                    threeOfAKind = threeOfAKind - 3;
-//                    if (threeOfAKind > 0) {
-//                        victoryPoints += threeOfAKind * Integer.parseInt(temp);
-//                    }
-//                }
+                else if (temp.equals("Smash")) {
+                    smashCount++;
+                }
 
+
+
+
+            }
+            if (energyPool <= 0) {
+
+                System.out.println("There are no more energy cubes in the pool");
             }
 
             if (ones >= 3) {
@@ -352,22 +386,64 @@ public class PlayGame {
                     victoryPoints += threes * 3;
                 }
             }
+
+            if (finalMonstersInGame.get(turn).getMonsterLocation()) {
+                for (Monster m : finalMonstersInGame) {
+                    if (!m.getMonsterLocation()) {
+                        m.setHealth(m.getHealth() - smashCount);
+                    }
+
+                }
+            }
+            else {
+
+                for (Monster m: finalMonstersInGame) {
+                    if (m.getMonsterLocation()) {
+                        m.setHealth(m.getHealth() - smashCount);
+                        System.out.println("Do you want to stay or leave Tokyo?");
+                        System.out.println("1. Leave");
+                        System.out.println("2. Stay");
+                        if (Integer.parseInt(getInput(2)) == 1) {
+                            m.setMonsterLocation(false);
+                        }
+                    }
+                }
+            }
+            finalMonstersInGame.get(turn).getPlayerDeck().add(new PowerCard("asdf", 3, "Keep", "x"));
             finalMonstersInGame.get(turn).setVictoryPoints(victoryPoints);
+            finalMonstersInGame.get(turn).setEnergyCubes(energyCount);
+            System.out.println(finalMonstersInGame.get(turn).getEnergyCubes());
 
+            for (int i = 0; i < finalMonstersInGame.size(); i++) {
+                if (finalMonstersInGame.get(i).getHealth() <= 0) {
+                    System.out.println(finalMonstersInGame.get(i).getName() + " has been eliminated");
+                    for (PowerCard p : finalMonstersInGame.get(i).getPlayerDeck()) {
+                        if (p.getPowerCardType().equals("Keep")) {
+                            if (p.getPowerCardName().equals("It Has A Child"))
+                            System.out.println(finalMonstersInGame.get(i).getPlayerDeck().get(0).getPowerCardName());
+                            System.out.println("POWER CARD IS GETTING FUCKING REMOVED!");
+                            deck.addPowerCard(p);
 
-            /* ~ 3. Enter Tokyo ~ */
-            if (tokyo.size() == 0) {
-                tokyo.add(finalMonstersInGame.get(turn));
+                        }
+                    }
+                    energyPool = energyPool + finalMonstersInGame.get(i).getEnergyCubes();
+                    finalMonstersInGame.get(i).getPlayerDeck().clear();
+                    finalMonstersInGame.remove(i);
+                }
             }
-            System.out.println("Currently in Tokyo:");
-            for (Monster m : tokyo) {
-                System.out.println(m.getName());
+            for (int i = 0; i < finalMonstersInGame.size(); i++) {
+                System.out.println(finalMonstersInGame.get(i).getName() + " has " + finalMonstersInGame.get(i).getHealth() + " health");
             }
-
-            break;
+            if (turn == finalMonstersInGame.size() - 1) {
+                turn = 0;
+            }
+            else {
+                turn++;
+            }
 
         }
-    }
+
+    } //END OF MAIN
 
     public static boolean isNumber(String userInput) {
         try {
