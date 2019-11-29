@@ -171,111 +171,119 @@ public class PlayGame {
             boolean stopFlag = false;
             ArrayList<String> finalDice = new ArrayList<String>();  // Hold the contents of their desired dice
             while (rollCount <= 3) {
+                System.out.println("final dice: ");
+                System.out.println(finalDice);
 
-                if (rollCount == 1) {
+//                if (rollCount == 1) {
+//                    diceRoll.rollDice();
+//                    System.out.println("\nRoll 1!");
+//                    System.out.println(finalMonstersInGame.get(turn).getName() +
+//                            " rolls " + diceRoll.returnDice());
+//                    System.out.println("\nRoll again?\n1. Yes\n2. No (stop rolling)\nEnter an option: ");
+//                    if (Integer.parseInt(getInput(2)) == 2) {
+//                        finalDice.addAll(diceRoll.returnDice());
+//                        stopFlag = true;
+//                    }
+//                }
+
+                //else if (rollCount == 2) {
+
+                if (finalDice.size() == 0) {
                     diceRoll.rollDice();
-                    System.out.println("\nRoll 1!");
-                    System.out.println(finalMonstersInGame.get(turn).getName() +
-                            " rolls " + diceRoll.returnDice());
-                    System.out.println("\nRoll again?\n1. Yes\n2. No (stop rolling)\nEnter an option: ");
-                    if (Integer.parseInt(getInput(2)) == 2) {
-                        finalDice.addAll(diceRoll.returnDice());
-                        stopFlag = true;
+                }
+                else {
+                    diceRoll.rollModifiedDice(6 - finalDice.size());
+                }
+                System.out.println("\nRoll " + rollCount + "!");
+                System.out.println(finalMonstersInGame.get(turn).getName() +
+                        " rolls " + diceRoll.returnDice());
+
+                valid = false;
+
+                System.out.println("\nSelect which dice you'd like to keep (enter numbers): ");
+                for (int i = 0; i < diceRoll.returnDice().size() + 1; i++) {
+                    if (i != diceRoll.returnDice().size()) {
+                        System.out.println(i + 1 + ". " + diceRoll.returnDice().get(i));
+                    } else {
+                        System.out.println(i + 1 + ". Keep all (stop rolling)");
                     }
                 }
+                System.out.println("Enter selection: ");
 
-                else if (rollCount == 2) {
 
-                    diceRoll.rollDice();
-                    System.out.println("\nRoll 2!");
-                    System.out.println(finalMonstersInGame.get(turn).getName() +
-                            " rolls " + diceRoll.returnDice());
+                while (!valid) {
+                    boolean numInRange = false;
+                    boolean numIsQuit = false;
 
-                    valid = false;
+                    String diceList = input.nextLine();
 
-                    System.out.println("\nSelect which dice you'd like to keep (enter numbers): ");
-                    for (int i = 0; i < diceRoll.returnDice().size() + 1; i++) {
-                        if (i != diceRoll.returnDice().size()) {
-                            System.out.println(i + 1 + ". " + diceRoll.returnDice().get(i));
-                        } else {
-                            System.out.println(i + 1 + ". Keep all (stop rolling)");
+                    for (int i = 0; i < diceList.length(); i++) {
+                        if (Character.isDigit(diceList.charAt(i))) {
+                            if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
+                                    Character.getNumericValue(diceList.charAt(i)) <= diceRoll.returnDice().size()
+                                            + 1) {
+                                if (Character.getNumericValue(diceList.charAt(i)) == diceRoll.returnDice().size()
+                                        + 1) {
+                                    numIsQuit = true;
+                                }
+                                else {
+                                    numInRange = true;
+                                }
+                            }
                         }
                     }
-                    System.out.println("Enter selection: ");
 
-
-                    while (!valid) {
-                        boolean numInRange = false;
-                        boolean numIsQuit = false;
-
-                        String diceList = input.nextLine();
-
+                    if (!(numInRange && numIsQuit)) {
                         for (int i = 0; i < diceList.length(); i++) {
                             if (Character.isDigit(diceList.charAt(i))) {
                                 if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
-                                        Character.getNumericValue(diceList.charAt(i)) <= diceRoll.returnDice().size()
-                                                + 1) {
-                                    if (Character.getNumericValue(diceList.charAt(i)) == diceRoll.returnDice().size()
-                                            + 1) {
-                                        numIsQuit = true;
+                                        Character.getNumericValue(diceList.charAt(i)) <=
+                                                diceRoll.returnDice().size() + 1) {
+                                    if (Character.getNumericValue(diceList.charAt(i)) ==
+                                            diceRoll.returnDice().size() + 1) {
+                                        finalDice.addAll(diceRoll.returnDice());
+                                        valid = true;
+                                        //stopFlag = true;
+                                        break;
                                     }
                                     else {
-                                        numInRange = true;
+                                        finalDice.add(diceRoll.returnDice().get(Character.getNumericValue(
+                                                diceList.charAt(i)) - 1));
+                                        valid = true;
                                     }
                                 }
                             }
                         }
+                    }
 
-                        if (!(numInRange && numIsQuit)) {
-                            for (int i = 0; i < diceList.length(); i++) {
-                                if (Character.isDigit(diceList.charAt(i))) {
-                                    if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
-                                            Character.getNumericValue(diceList.charAt(i)) <=
-                                                    diceRoll.returnDice().size() + 1) {
-                                        if (Character.getNumericValue(diceList.charAt(i)) ==
-                                                diceRoll.returnDice().size() + 1) {
-                                            finalDice.addAll(diceRoll.returnDice());
-                                            valid = true;
-                                            stopFlag = true;
-                                            break;
-                                        } else {
-                                            finalDice.add(diceRoll.returnDice().get(Character.getNumericValue(
-                                                    diceList.charAt(i)) - 1));
-                                            valid = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!valid) {
-                            System.out.println("\nThat option doesn't exist!\nTry again:");
-                        }
+                    if (!valid) {
+                        System.out.println("\nThat option doesn't exist!\nTry again:");
                     }
                 }
+                //}
 
-                else if (rollCount == 3) {
-                    System.out.println("\n1. Roll the dice you don't like\n2. Re-roll everything\n3. Stop rolling" +
-                            "\nEnter an option: ");
-                    int choice = Integer.parseInt(getInput(3));
-                    if (choice == 1) {
-                        diceRoll.rollModifiedDice(6 - finalDice.size());
-                        System.out.println("\nRoll 3!");
-                        System.out.println(finalMonstersInGame.get(turn).getName() +
-                                " rolls " + diceRoll.returnDice());
-                        finalDice.addAll(diceRoll.returnDice());
-                    }
-                    else if (choice == 2) {
-                        diceRoll.rollDice();
-                        System.out.println("\nRoll 3!");
-                        System.out.println(finalMonstersInGame.get(turn).getName() +
-                                " rolls " + diceRoll.returnDice());
-                        finalDice.addAll(diceRoll.returnDice());
-                    }
-                    else {
-                        stopFlag = true;
-                    }
-                }
+//                else if (rollCount == 3) {
+//                    System.out.println("\n1. Roll the dice you don't like\n2. Re-roll everything\n3. Stop rolling" +
+//                            "\nEnter an option: ");
+//                    int choice = Integer.parseInt(getInput(3));
+//                    if (choice == 1) {
+//                        diceRoll.rollModifiedDice(6 - finalDice.size());
+//                        System.out.println("\nRoll 3!");
+//                        System.out.println(finalMonstersInGame.get(turn).getName() +
+//                                " rolls " + diceRoll.returnDice());
+//                        finalDice.addAll(diceRoll.returnDice());
+//                    }
+//                    else if (choice == 2) {
+//                        diceRoll.rollDice();
+//                        System.out.println("\nRoll 3!");
+//                        System.out.println(finalMonstersInGame.get(turn).getName() +
+//                                " rolls " + diceRoll.returnDice());
+//                        finalDice.addAll(diceRoll.returnDice());
+//                    }
+//                    else {
+//                        stopFlag = true;
+//                    }
+//                }
 
                 if (stopFlag) {
                     break;
@@ -286,7 +294,7 @@ public class PlayGame {
                 rollCount++;
             }
             System.out.println("-----------------------");
-            System.out.println(finalMonstersInGame.get(turn) + "'s final dice: ");
+            System.out.println(finalMonstersInGame.get(turn).getName() + "'s final dice: ");
             System.out.println(finalDice);
             System.out.println("-----------------------");
             /* ~ 1. END roll dice ~ */
