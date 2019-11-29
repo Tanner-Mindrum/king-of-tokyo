@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Monster{
@@ -6,12 +7,16 @@ public class Monster{
     private String monsterName;
     private boolean monsterLocation;
     private int victoryPoints;
+    private int energyCubes;
+    private ArrayList<PowerCard> playerDeck;
 
     public Monster() {
         health = 10;
         monsterName = "";
         monsterLocation = false;
         victoryPoints = 0;
+        energyCubes = 10;
+        playerDeck = new ArrayList<>();
     }
     
     //Settings the health of the monster 
@@ -48,6 +53,23 @@ public class Monster{
 
     public int getVictoryPoints() {
         return victoryPoints;
+    }
+
+
+    public void setEnergyCubes(int energyCubes) {
+        this.energyCubes = energyCubes;
+    }
+
+    public int getEnergyCubes() {
+        return energyCubes;
+    }
+
+    public void setPlayerDeck(ArrayList<PowerCard> playerDeck) {
+        this.playerDeck = playerDeck;
+    }
+
+    public ArrayList<PowerCard> getPlayerDeck() {
+        return playerDeck;
     }
 
 //    public ArrayList<String> getMonsterList() {
