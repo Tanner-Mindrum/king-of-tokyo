@@ -25,10 +25,10 @@ public class Dice {
     }
 
     // Rolls dice when number of black dice being rolled isn't equal to 6
-    public void rollModifiedDice(ArrayList<String> modifiedDice) {
+    public void rollModifiedDice(int amountToRoll) {
         Random randNum = new Random();
-        for (String s : modifiedDice) {
-            dice.add(modifiedDice.get(randNum.nextInt(modifiedDice.size())));
+        for (int i = 0; i < amountToRoll; i++) {
+            dice.add(diceElements[randNum.nextInt(diceElements.length)]);
         }
     }
 

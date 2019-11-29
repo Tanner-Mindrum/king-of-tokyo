@@ -54,7 +54,7 @@ public class PlayGame {
 
         // Player selects their monster and we validate their monster selection and remove that monster from list
         for (int i = 1; i <= Integer.parseInt(numPlayers); i++) {
-            System.out.println("Player " + i + " enter the name of the monster you wish to play: ");
+            System.out.println("Player " + i + ", enter the name of the monster you wish to play: ");
             String monsterInput = input.nextLine();
             while (!monsterList.contains(monsterInput)) {  // Validate their monster exists
                 System.out.println("Either that monster does not exist, or someone else already has it!\nTry again:");
@@ -141,70 +141,156 @@ public class PlayGame {
         /* Add monsters to a final array list of monsters in their correct orders. They are ordered by highest roller
          then by monsters on their left */
         ArrayList<Monster> finalMonstersInGame = new ArrayList<Monster>();
-        for (int i = monstersInGame.indexOf(monstersDiceRoll.get(0)); i < monsterList.size(); i++) {
+        for (int i = monstersInGame.indexOf(monstersDiceRoll.get(0)); i < monstersInGame.size(); i++) {
             finalMonstersInGame.add(monstersInGame.get(i));
         }
         for (int i = 0; i < monstersInGame.indexOf(monstersDiceRoll.get(0)); i++) {
             finalMonstersInGame.add(monstersInGame.get(i));
         }
 
-        System.out.println("Turn order:");
+        System.out.println("\nTurn order:");
         for (int i = 0; i < finalMonstersInGame.size(); i++) {
             System.out.println(i+1 + " - " + finalMonstersInGame.get(i).getName());
         }
 
         int turn = 0;
         ArrayList<Monster> tokyo = new ArrayList<Monster>();
-        System.out.println("\nThe game begins!\n");  // Play gong sound
+        System.out.println("\nThe game begins!");  // Play gong sound
         while (true) {
 
             // TURN OVERVIEW:
-            // 1. Roll Dice - a player can roll the dice 3 times TODO: tanner will complete this
+            // 1. Roll Dice - a player can roll the dice 3 times
             // 2. Resolve Dice
             // 3. Enter Tokyo
             // 4. Buy Power Cards
             // 5. End turn
-            System.out.println("\n" + finalMonstersInGame.get(turn).getName() + " it is your turn!");
+            System.out.println("\n" + finalMonstersInGame.get(turn).getName() + ", it's your turn!");
 
             /* ~ 1. Roll dice ~ */
-            int rollCount = 0;
+            int rollCount = 1;
+            boolean stopFlag = false;
             ArrayList<String> finalDice = new ArrayList<String>();  // Hold the contents of their desired dice
-            while (rollCount < 3) {
+            while (rollCount <= 3) {
 
-                diceRoll.rollDice();
-                System.out.println(finalMonstersInGame.get(turn).getName() + " rolls "
-                        + diceRoll.returnDice());
+                if (rollCount == 1) {
+                    diceRoll.rollDice();
+                    System.out.println("\nRoll 1!");
+                    System.out.println(finalMonstersInGame.get(turn).getName() +
+                            " rolls " + diceRoll.returnDice());
+                    System.out.println("\nRoll again?\n1. Yes\n2. No (stop rolling)\nEnter an option: ");
+                    if (Integer.parseInt(getInput(2)) == 2) {
+                        finalDice.addAll(diceRoll.returnDice());
+                        stopFlag = true;
+                    }
+                }
 
-                System.out.println("\nSelect which dice you'd like to keep (enter numbers in comma separated list): ");
-                for (int i = 0; i < diceRoll.returnDice().size() + 1; i++) {
-                    if (i != 6) {
-                        System.out.println(i + 1 + ". " + diceRoll.returnDice().get(i));
+                else if (rollCount == 2) {
+
+                    diceRoll.rollDice();
+                    System.out.println("\nRoll 2!");
+                    System.out.println(finalMonstersInGame.get(turn).getName() +
+                            " rolls " + diceRoll.returnDice());
+
+                    valid = false;
+
+                    System.out.println("\nSelect which dice you'd like to keep (enter numbers): ");
+                    for (int i = 0; i < diceRoll.returnDice().size() + 1; i++) {
+                        if (i != diceRoll.returnDice().size()) {
+                            System.out.println(i + 1 + ". " + diceRoll.returnDice().get(i));
+                        } else {
+                            System.out.println(i + 1 + ". Keep all (stop rolling)");
+                        }
+                    }
+                    System.out.println("Enter selection: ");
+
+
+                    while (!valid) {
+                        boolean numInRange = false;
+                        boolean numIsQuit = false;
+
+                        String diceList = input.nextLine();
+
+                        for (int i = 0; i < diceList.length(); i++) {
+                            if (Character.isDigit(diceList.charAt(i))) {
+                                if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
+                                        Character.getNumericValue(diceList.charAt(i)) <= diceRoll.returnDice().size()
+                                                + 1) {
+                                    if (Character.getNumericValue(diceList.charAt(i)) == diceRoll.returnDice().size()
+                                            + 1) {
+                                        numIsQuit = true;
+                                    }
+                                    else {
+                                        numInRange = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!(numInRange && numIsQuit)) {
+                            for (int i = 0; i < diceList.length(); i++) {
+                                if (Character.isDigit(diceList.charAt(i))) {
+                                    if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
+                                            Character.getNumericValue(diceList.charAt(i)) <=
+                                                    diceRoll.returnDice().size() + 1) {
+                                        if (Character.getNumericValue(diceList.charAt(i)) ==
+                                                diceRoll.returnDice().size() + 1) {
+                                            finalDice.addAll(diceRoll.returnDice());
+                                            valid = true;
+                                            stopFlag = true;
+                                            break;
+                                        } else {
+                                            finalDice.add(diceRoll.returnDice().get(Character.getNumericValue(
+                                                    diceList.charAt(i)) - 1));
+                                            valid = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!valid) {
+                            System.out.println("\nThat option doesn't exist!\nTry again:");
+                        }
+                    }
+                }
+
+                else if (rollCount == 3) {
+                    System.out.println("\n1. Roll the dice you don't like\n2. Re-roll everything\n3. Stop rolling" +
+                            "\nEnter an option: ");
+                    int choice = Integer.parseInt(getInput(3));
+                    if (choice == 1) {
+                        diceRoll.rollModifiedDice(6 - finalDice.size());
+                        System.out.println("\nRoll 3!");
+                        System.out.println(finalMonstersInGame.get(turn).getName() +
+                                " rolls " + diceRoll.returnDice());
+                        finalDice.addAll(diceRoll.returnDice());
+                    }
+                    else if (choice == 2) {
+                        diceRoll.rollDice();
+                        System.out.println("\nRoll 3!");
+                        System.out.println(finalMonstersInGame.get(turn).getName() +
+                                " rolls " + diceRoll.returnDice());
+                        finalDice.addAll(diceRoll.returnDice());
                     }
                     else {
-                        System.out.println(i + 1 + ". Keep all");
+                        stopFlag = true;
                     }
                 }
 
-                String diceList = input.nextLine();
-                boolean quitFlag = false;
-                for (int i = 0; i < diceList.length(); i++) {
-                    if (Character.isDigit(diceList.charAt(i))) {
-                        if (diceList.charAt(i) == '7') {
-                            quitFlag = true;
-                        }
-                        else {
-                            finalDice.add(diceRoll.returnDice().get(i));
-                        }
-                    }
-                }
-
-                if (quitFlag) {
+                if (stopFlag) {
                     break;
                 }
+
 
                 diceRoll.clearDice();
                 rollCount++;
             }
+            System.out.println("-----------------------");
+            System.out.println(finalMonstersInGame.get(turn) + "'s final dice: ");
+            System.out.println(finalDice);
+            System.out.println("-----------------------");
+            /* ~ 1. END roll dice ~ */
+
 
             /* ~ 3. Enter Tokyo ~ */
             if (tokyo.size() == 0) {
@@ -230,23 +316,24 @@ public class PlayGame {
         return true;
     }
 
-//    public static String getInput(int menuRange, boolean valid) {
-//        Scanner in = new Scanner(System.in);
-//        String input = "";
-//        while (!valid) {  // Validate their monster exists
-//            input = in.nextLine();
-//            while (!isNumber(input)) {  // Checks if input is a number
-//                System.out.println("Please enter a REAL number: ");
-//                input = in.nextLine();
-//            }
-//
-//            if (1 <= Integer.parseInt(input) && Integer.parseInt(input) <= menuRange) {
-//                valid = true;
-//            }
-//            else {
-//                System.out.println("That option does not exist! Try again: ");
-//            }
-//        }
-//        return input;
-//    }
+    public static String getInput(int menuRange) {
+        Scanner in = new Scanner(System.in);
+        String input = "";
+        boolean valid = false;
+        while (!valid) {  // Validate their monster exists
+            input = in.nextLine();
+            while (!isNumber(input)) {  // Checks if input is a number
+                System.out.println("Please enter a REAL number: ");
+                input = in.nextLine();
+            }
+
+            if (1 <= Integer.parseInt(input) && Integer.parseInt(input) <= menuRange) {
+                valid = true;
+            }
+            else {
+                System.out.println("That option does not exist! Try again: ");
+            }
+        }
+        return input;
+    }
 }
