@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class Dice {
 
-    private final String[] diceElements = {"1", "2", "3", "Energy Cube", "Smash", "Heart"};
+    private final String[] diceElements = {"1", "2", "3", "Energy", "Smash", "Heal"};
     private ArrayList<String> dice;
     private int count;
     Dice() {

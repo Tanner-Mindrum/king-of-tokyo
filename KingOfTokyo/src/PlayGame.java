@@ -333,11 +333,11 @@ public class PlayGame {
             int victoryPoints = 0;
             int energyCount = 0;
             int smashCount = 0;
+            int healthCount = 0;
 
             for (int i = 0; i < finalDice.size(); i++) {
                 String temp = finalDice.get(i);
                 if (isNumber(temp)) {
-
                     if (temp.equals("1")) {
                         ones++;
                     } else if (temp.equals("2")) {
@@ -346,24 +346,20 @@ public class PlayGame {
                         threes++;
                     }
                 }
-                else if (temp.equals("Energy Cube") && energyPool > 0) {
+                else if (temp.equals("Energy") && energyPool > 0) {
                     energyCount++;
                     energyPool--;
                 }
-
                 else if (temp.equals("Smash")) {
                     smashCount++;
                 }
-
-
-
-
+                else if (temp.equals("Heal")) {
+                    healthCount++;
+                }
             }
             if (energyPool <= 0) {
-
                 System.out.println("There are no more energy cubes in the pool");
             }
-
             if (ones >= 3) {
                 victoryPoints += 1;
                 ones -= 3;
@@ -381,7 +377,6 @@ public class PlayGame {
             if (threes >= 3) {
                 victoryPoints += 3;
                 threes -= 3;
-
                 if (threes > 0) {
                     victoryPoints += threes * 3;
                 }
@@ -392,11 +387,9 @@ public class PlayGame {
                     if (!m.getMonsterLocation()) {
                         m.setHealth(m.getHealth() - smashCount);
                     }
-
                 }
             }
             else {
-
                 for (Monster m: finalMonstersInGame) {
                     if (m.getMonsterLocation()) {
                         m.setHealth(m.getHealth() - smashCount);
@@ -409,28 +402,40 @@ public class PlayGame {
                     }
                 }
             }
+
+            // Heal
+            if (!finalMonstersInGame.get(turn).getMonsterLocation()) {
+                if (finalMonstersInGame.get(turn).getHealth() < 10) {
+                    finalMonstersInGame.get(turn).setHealth(healthCount);
+                }
+            }
+
             finalMonstersInGame.get(turn).getPlayerDeck().add(new PowerCard("asdf", 3, "Keep", "x"));
             finalMonstersInGame.get(turn).setVictoryPoints(victoryPoints);
             finalMonstersInGame.get(turn).setEnergyCubes(energyCount);
-            System.out.println(finalMonstersInGame.get(turn).getEnergyCubes());
 
+            boolean removeFlag = true;
             for (int i = 0; i < finalMonstersInGame.size(); i++) {
                 if (finalMonstersInGame.get(i).getHealth() <= 0) {
                     System.out.println(finalMonstersInGame.get(i).getName() + " has been eliminated");
                     for (PowerCard p : finalMonstersInGame.get(i).getPlayerDeck()) {
-                        if (p.getPowerCardType().equals("Keep")) {
-                            if (p.getPowerCardName().equals("It Has A Child"))
-                            System.out.println(finalMonstersInGame.get(i).getPlayerDeck().get(0).getPowerCardName());
-                            System.out.println("POWER CARD IS GETTING FUCKING REMOVED!");
-                            deck.addPowerCard(p);
-
-                        }
+                            if (p.getPowerCardName().equals("It Has a Child")) {
+                                System.out.println(finalMonstersInGame.get(i).getName() + " has been revived!");
+                                finalMonstersInGame.get(i).getPlayerDeck().clear();
+                                finalMonstersInGame.get(i).setVictoryPoints(0);
+                                finalMonstersInGame.get(i).setHealth(0);
+                                removeFlag = false;
+                            }
+                            deck.addPowerCard(finalMonstersInGame.get(i).getPlayerDeck().remove(
+                                    finalMonstersInGame.get(i).getPlayerDeck().indexOf(p)));
                     }
-                    energyPool = energyPool + finalMonstersInGame.get(i).getEnergyCubes();
-                    finalMonstersInGame.get(i).getPlayerDeck().clear();
-                    finalMonstersInGame.remove(i);
+                    if (removeFlag) {
+                        energyPool = energyPool + finalMonstersInGame.get(i).getEnergyCubes();
+                        finalMonstersInGame.remove(i);
+                    }
                 }
             }
+
             for (int i = 0; i < finalMonstersInGame.size(); i++) {
                 System.out.println(finalMonstersInGame.get(i).getName() + " has " + finalMonstersInGame.get(i).getHealth() + " health");
             }
@@ -440,7 +445,6 @@ public class PlayGame {
             else {
                 turn++;
             }
-
         }
 
     } //END OF MAIN
