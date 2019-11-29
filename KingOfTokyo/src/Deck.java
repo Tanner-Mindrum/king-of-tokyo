@@ -12,7 +12,7 @@ public class Deck {
     public Deck() {
         // Tanner's path: "C:/CECS 343/343-KingOfTokyo-HTT/KingOfTokyo/src/cardList.csv"
         // Tymee's path: "C:/Users/tymee/IdeaProjects/king-of-tokyo/KingOfTokyo/src/cardList.csv"
-        csvPath = "C:/CECS 343/343-KingOfTokyo-HTT/KingOfTokyo/src/cardList.csv";
+        csvPath = "C:/Users/tymee/IdeaProjects/king-of-tokyo/KingOfTokyo/src/cardList.csv";
         line = "";
         csvSplitter = ",";
         deck = new ArrayList<>();
@@ -41,6 +41,10 @@ public class Deck {
     // Returns a PowerCard by popping the top one from the deck
     public PowerCard dealPowerCard() {
         return deck.remove(0);
+    }
+
+    public void addPowerCard(PowerCard card) {
+        deck.add(card);
     }
 
     public void displayDeck() {
