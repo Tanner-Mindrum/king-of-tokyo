@@ -40,8 +40,10 @@ public class Deck {
                     card[3] = "If someone kills you, Go back to 10[Heart] and lose all your [Star]. If either of you or your killer win, or all other players are eliminated then you both win. If your killer is eliminated then you are also. If you are eliminated a second time this card has no effect.";
                 }
                 else if (card[0].equals("Thunder Stomp")) {
-                    card[3] = "\tIf you score 4[Star] in a turn, all players roll one less die until your next turn.";
+                    card[3] = "If you score 4[Star] in a turn, all players roll one less die until your next turn.";
                 }
+
+                card[3].replace("\"", "");
 
                 deck.add(new PowerCard(card[0], Integer.parseInt(card[1]), card[2], card[3]));  // Add card to deck
             }
