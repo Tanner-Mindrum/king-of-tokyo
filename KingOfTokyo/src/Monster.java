@@ -15,7 +15,7 @@ public class Monster{
         monsterName = "";
         monsterLocation = false;
         victoryPoints = 0;
-        energyCubes = 10;
+        energyCubes = 100;
         playerDeck = new ArrayList<>();
     }
     

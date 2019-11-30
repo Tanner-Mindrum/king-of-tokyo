@@ -3,9 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="88a0be0a-c5c3-4fbf-a409-041d3e99237a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Deck.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Dice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Dice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KingOfTokyo/Deck.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KingOfTokyo/Deck.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KingOfTokyo/Monster.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KingOfTokyo/Monster.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KingOfTokyo/PlayGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KingOfTokyo/PlayGame.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Monster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Monster.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PlayGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PlayGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PowerCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PowerCard.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,6 +37,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Console Font" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -94,7 +98,7 @@
       <workItem from="1574796368530" duration="4884000" />
       <workItem from="1574908778345" duration="6231000" />
       <workItem from="1574961546766" duration="10121000" />
-      <workItem from="1575051643367" duration="9347000" />
+      <workItem from="1575051643367" duration="23641000" />
     </task>
     <servers />
   </component>

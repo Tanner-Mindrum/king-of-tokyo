@@ -40,11 +40,11 @@ public class PowerCard {
         this.powerCardType = type;
     }
 
-    private String getPowerCardAbility() {
+    public String getPowerCardAbility() {
         return this.powerCardAbility;
     }
 
-    private void setPowerCardAbility(String ability) {
+    public void setPowerCardAbility(String ability) {
         this.powerCardAbility = ability;
     }
 }

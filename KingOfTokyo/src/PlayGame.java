@@ -1,7 +1,10 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Scanner;
+import java.math.*;
+
+// For Deck class csv path:
+// Hunter's path: "C:\Users\Hunter\Desktop\King_of_Toyko_Copy\king-of-tokyo\KingOfTokyo\src\cardList.csv"
 
 public class PlayGame {
 
@@ -66,28 +69,28 @@ public class PlayGame {
             // Create a new monster object and add it to the list of monsters in this current game
             Monster monster = new Monster();
             monster.setName(monsterInput);
-            monster.setHealth(10);
-            monster.setVictoryPoints(0);
             monstersInGame.add(monster);
         }
 
         // Create deck of PowerCards used in the current game
+
+
         Deck deck = new Deck();
         deck.makeDeck();
         deck.shuffle();
 
-        // Deal the first three power cards face up
-        System.out.println("\nFirst three cards:");
-        System.out.println("------------------");
-        System.out.print(deck.dealPowerCard().getPowerCardName() + " | ");
-        System.out.print(deck.dealPowerCard().getPowerCardName() + " | ");
-        System.out.println(deck.dealPowerCard().getPowerCardName());
+        // Initializing and filling faceUpCards (to 3)
+        ArrayList<PowerCard> faceUpCards = new ArrayList<>();
+        faceUpCards.add(deck.dealPowerCard());
+        faceUpCards.add(deck.dealPowerCard());
+        faceUpCards.add(deck.dealPowerCard());
 
         // Create a pile of tokens
         int smokeToken = 3;
         int mimicToken = 1;
         int shrinkToken = 12;
         int poisonToken = 12;
+
         int energyPool = 50;
 
         // Determine which player goes first
@@ -156,8 +159,12 @@ public class PlayGame {
         }
 
         int turn = 0;
+        ArrayList<Monster> tokyo = new ArrayList<Monster>();
 
         System.out.println("\nThe game begins!");  // Play gong sound
+
+        // Set variable for player = finalMonstersInGame.get(turn) for easy access
+
         while (true) {
 
             // TURN OVERVIEW:
@@ -168,27 +175,43 @@ public class PlayGame {
             // 5. End turn
             System.out.println("\n" + finalMonstersInGame.get(turn).getName() + ", it's your turn!");
 
+            /* ~ 2. Enter Tokyo ~ */
+            boolean inTokyo = false;
+            for (Monster m : finalMonstersInGame) {
+                if (m.getMonsterLocation()) {
+                    inTokyo = true;
+                }
+            }
+
+            if (!inTokyo) {
+                finalMonstersInGame.get(turn).setMonsterLocation(true);
+                System.out.println(finalMonstersInGame.get(turn).getName() + " has entered Tokyo!");
+            }
+            /* ~ 2. END Enter Tokyo ~ */
+
+            System.out.println(finalMonstersInGame.get(turn).getName() + "'s current stats: " + "\nHealth: " + finalMonstersInGame.get(turn).getHealth() +
+                    "\nVictory Points: " + finalMonstersInGame.get(turn).getVictoryPoints() +
+                    "\nEnergy Cubes: " + finalMonstersInGame.get(turn).getEnergyCubes() +
+                    "\nIn Tokyo: " + finalMonstersInGame.get(turn).getMonsterLocation());
+
+
+            // Displaying the player's current PowerCards
+            System.out.println("Displaying " + finalMonstersInGame.get(turn).getName() + "\'s kept Power Cards.");
+            for (int i = 0; i < finalMonstersInGame.get(turn).getPlayerDeck().size(); i++) {
+                System.out.println(finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardName() + ": " +
+                        finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardAbility());
+            }
+
             /* ~ 1. Roll dice ~ */
             int rollCount = 1;
             boolean stopFlag = false;
             ArrayList<String> finalDice = new ArrayList<String>();  // Hold the contents of their desired dice
+            ArrayList<String> currentRoll = new ArrayList<String>();
+
             while (rollCount <= 3) {
+
                 System.out.println("final dice: ");
                 System.out.println(finalDice);
-
-//                if (rollCount == 1) {
-//                    diceRoll.rollDice();
-//                    System.out.println("\nRoll 1!");
-//                    System.out.println(finalMonstersInGame.get(turn).getName() +
-//                            " rolls " + diceRoll.returnDice());
-//                    System.out.println("\nRoll again?\n1. Yes\n2. No (stop rolling)\nEnter an option: ");
-//                    if (Integer.parseInt(getInput(2)) == 2) {
-//                        finalDice.addAll(diceRoll.returnDice());
-//                        stopFlag = true;
-//                    }
-//                }
-
-                //else if (rollCount == 2) {
 
                 if (finalDice.size() == 0) {
                     diceRoll.rollDice();
@@ -196,103 +219,125 @@ public class PlayGame {
                 else {
                     diceRoll.rollModifiedDice(6 - finalDice.size());
                 }
+
                 System.out.println("\nRoll " + rollCount + "!");
                 System.out.println(finalMonstersInGame.get(turn).getName() +
                         " rolls " + diceRoll.returnDice());
 
+                currentRoll.addAll(diceRoll.returnDice());
+                currentRoll.addAll(finalDice);
+
+                if (rollCount != 3) {
+                    finalDice.clear();
+                }
+
+                System.out.println("CURR ROLL");
+                System.out.println(currentRoll);
+
                 valid = false;
 
-                System.out.println("\nSelect which dice you'd like to keep (enter numbers): ");
-                for (int i = 0; i < diceRoll.returnDice().size() + 1; i++) {
-                    if (i != diceRoll.returnDice().size()) {
-                        System.out.println(i + 1 + ". " + diceRoll.returnDice().get(i));
-                    } else {
-                        System.out.println(i + 1 + ". Keep all (stop rolling)");
-                    }
-                }
-                System.out.println("Enter selection: ");
+                if (rollCount != 3) {
 
-
-                while (!valid) {
-                    boolean numInRange = false;
-                    boolean numIsQuit = false;
-
-                    String diceList = input.nextLine();
-
-                    for (int i = 0; i < diceList.length(); i++) {
-                        if (Character.isDigit(diceList.charAt(i))) {
-                            if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
-                                    Character.getNumericValue(diceList.charAt(i)) <= diceRoll.returnDice().size()
-                                            + 1) {
-                                if (Character.getNumericValue(diceList.charAt(i)) == diceRoll.returnDice().size()
-                                        + 1) {
-                                    numIsQuit = true;
-                                }
-                                else {
-                                    numInRange = true;
-                                }
-                            }
+                    System.out.println("\nSelect which dice you'd like to keep (enter numbers): ");
+                    for (int i = 0; i < currentRoll.size() + 1; i++) {
+                        if (i != currentRoll.size()) {
+                            System.out.println(i + 1 + ". " + currentRoll.get(i));
+                        } else {
+                            System.out.println(i + 1 + ". Keep all (stop rolling)");
+                            System.out.println(i + 2 + ". Re-roll all");
                         }
                     }
+                    System.out.println("Enter selection: ");
 
-                    if (!(numInRange && numIsQuit)) {
+                    while (!valid) {
+                        boolean numInRange = false;
+                        boolean numIsQuit = false;
+                        boolean duplicate = false;
+
+                        String diceList = input.nextLine();
+
+                        // Check they don't enter an option and keep all
                         for (int i = 0; i < diceList.length(); i++) {
                             if (Character.isDigit(diceList.charAt(i))) {
                                 if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
-                                        Character.getNumericValue(diceList.charAt(i)) <=
-                                                diceRoll.returnDice().size() + 1) {
-                                    if (Character.getNumericValue(diceList.charAt(i)) ==
-                                            diceRoll.returnDice().size() + 1) {
-                                        finalDice.addAll(diceRoll.returnDice());
-                                        valid = true;
-                                        //stopFlag = true;
-                                        break;
-                                    }
-                                    else {
-                                        finalDice.add(diceRoll.returnDice().get(Character.getNumericValue(
-                                                diceList.charAt(i)) - 1));
-                                        valid = true;
+                                        Character.getNumericValue(diceList.charAt(i)) <= currentRoll.size()
+                                                + 2) {
+                                    if (Character.getNumericValue(diceList.charAt(i)) == currentRoll.size()
+                                            + 1) {
+                                        numIsQuit = true;
+                                    } else {
+                                        numInRange = true;
                                     }
                                 }
                             }
                         }
-                    }
 
-                    if (!valid) {
-                        System.out.println("\nThat option doesn't exist!\nTry again:");
+                        // Check duplicate
+                        for (int i = 0; i < diceList.length(); i++) {
+                            for (int j = i+1; j < diceList.length(); j++) {
+                                if (diceList.charAt(j) == diceList.charAt(i)) {
+                                    duplicate = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Check if they manually enter keep all
+                        int fullCount = 0;
+                        for (int i = 0; i < diceList.length(); i++) {
+                            if (Character.isDigit(diceList.charAt(i))) {
+                                fullCount += Character.getNumericValue(diceList.charAt(i));
+                            }
+                        }
+
+                        if (!(numInRange && numIsQuit || duplicate)) {
+                            for (int i = 0; i < diceList.length(); i++) {
+                                if (Character.isDigit(diceList.charAt(i))) {
+                                    if (1 <= Character.getNumericValue(diceList.charAt(i)) &&
+                                            Character.getNumericValue(diceList.charAt(i)) <=
+                                                    currentRoll.size() + 2) {
+                                        // Keep all
+                                        if (Character.getNumericValue(diceList.charAt(i)) ==
+                                                currentRoll.size() + 1 || fullCount == 21) {
+                                            finalDice.clear();
+                                            finalDice.addAll(currentRoll);
+                                            valid = true;
+                                            stopFlag = true;
+                                            break;
+                                        }
+                                        // Re-roll all
+                                        else if (Character.getNumericValue(diceList.charAt(i)) ==
+                                                currentRoll.size() + 2) {
+                                            valid = true;
+                                        }
+                                        // Keep individual
+                                        else {
+                                            finalDice.add(currentRoll.get(Character.getNumericValue(
+                                                    diceList.charAt(i)) - 1));
+                                            valid = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!valid) {
+                            System.out.println("\nThat option doesn't exist!\nTry again:");
+                        }
                     }
                 }
-                //}
-
-//                else if (rollCount == 3) {
-//                    System.out.println("\n1. Roll the dice you don't like\n2. Re-roll everything\n3. Stop rolling" +
-//                            "\nEnter an option: ");
-//                    int choice = Integer.parseInt(getInput(3));
-//                    if (choice == 1) {
-//                        diceRoll.rollModifiedDice(6 - finalDice.size());
-//                        System.out.println("\nRoll 3!");
-//                        System.out.println(finalMonstersInGame.get(turn).getName() +
-//                                " rolls " + diceRoll.returnDice());
-//                        finalDice.addAll(diceRoll.returnDice());
-//                    }
-//                    else if (choice == 2) {
-//                        diceRoll.rollDice();
-//                        System.out.println("\nRoll 3!");
-//                        System.out.println(finalMonstersInGame.get(turn).getName() +
-//                                " rolls " + diceRoll.returnDice());
-//                        finalDice.addAll(diceRoll.returnDice());
-//                    }
-//                    else {
-//                        stopFlag = true;
-//                    }
-//                }
+                else {
+                    System.out.println(diceRoll.returnDice());
+                    finalDice.addAll(diceRoll.returnDice());
+                }
 
                 if (stopFlag) {
+                    diceRoll.clearDice();
                     break;
                 }
 
-
                 diceRoll.clearDice();
+                currentRoll.clear();
                 rollCount++;
             }
             System.out.println("-----------------------");
@@ -301,32 +346,9 @@ public class PlayGame {
             System.out.println("-----------------------");
             /* ~ 1. END roll dice ~ */
 
-            /* ~ 2. Enter Tokyo ~ */
-            boolean inTokyo = false;
-            for (Monster m : finalMonstersInGame) {
-                if (m.getMonsterLocation()) {
-                    inTokyo = true;
-
-                }
-
-            }
-
-            if (!inTokyo) {
-                finalMonstersInGame.get(turn).setMonsterLocation(true);
-
-            }
             /* ~ 3. Resolve dice ~ */
-            finalDice.clear();
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-            finalDice.add("Smash");
-           // finalDice.add("Smash");
+
+            // finalDice.add("Smash");
             int ones = 0;
             int twos = 0;
             int threes = 0;
@@ -371,14 +393,14 @@ public class PlayGame {
                 victoryPoints += 2;
                 twos -= 3;
                 if (twos > 0) {
-                    victoryPoints += twos * 2;
+                    victoryPoints += twos;
                 }
             }
             if (threes >= 3) {
                 victoryPoints += 3;
                 threes -= 3;
                 if (threes > 0) {
-                    victoryPoints += threes * 3;
+                    victoryPoints += threes;
                 }
             }
 
@@ -393,11 +415,18 @@ public class PlayGame {
                 for (Monster m: finalMonstersInGame) {
                     if (m.getMonsterLocation()) {
                         m.setHealth(m.getHealth() - smashCount);
-                        System.out.println("Do you want to stay or leave Tokyo?");
-                        System.out.println("1. Leave");
-                        System.out.println("2. Stay");
-                        if (Integer.parseInt(getInput(2)) == 1) {
-                            m.setMonsterLocation(false);
+                        if (smashCount >= 1 && healthCount > 0) {
+                            System.out.println(m.getName() + ", do you want to stay or leave Tokyo?");
+                            System.out.println("1. Leave");
+                            System.out.println("2. Stay");
+                            System.out.println(m.getName() + "'s current stats: " + "\nHealth: " + m.getHealth() +
+                                    "\nVictory Points: " + m.getVictoryPoints() +
+                                    "\nEnergy Cubes: " + m.getEnergyCubes() +
+                                    "\nIn Tokyo: " + m.getMonsterLocation());
+                            if (Integer.parseInt(getInput(2)) == 1) {
+                                m.setMonsterLocation(false);
+                                System.out.println(m.getName() + " has left Tokyo!");
+                            }
                         }
                     }
                 }
@@ -406,28 +435,38 @@ public class PlayGame {
             // Heal
             if (!finalMonstersInGame.get(turn).getMonsterLocation()) {
                 if (finalMonstersInGame.get(turn).getHealth() < 10) {
-                    finalMonstersInGame.get(turn).setHealth(healthCount);
+                    finalMonstersInGame.get(turn).setHealth(healthCount + finalMonstersInGame.get(turn).getHealth());
                 }
             }
+            if (finalMonstersInGame.get(turn).getHealth() > 10) {
+                finalMonstersInGame.get(turn).setHealth(10);
+            }
 
-            finalMonstersInGame.get(turn).getPlayerDeck().add(new PowerCard("asdf", 3, "Keep", "x"));
-            finalMonstersInGame.get(turn).setVictoryPoints(victoryPoints);
-            finalMonstersInGame.get(turn).setEnergyCubes(energyCount);
+            finalMonstersInGame.get(turn).setVictoryPoints(victoryPoints + finalMonstersInGame.get(turn).getVictoryPoints());
+            finalMonstersInGame.get(turn).setEnergyCubes(energyCount + finalMonstersInGame.get(turn).getEnergyCubes());
+
+            System.out.println(finalMonstersInGame.get(turn).getName() + "'s current stats: " + "\nHealth: " + finalMonstersInGame.get(turn).getHealth() +
+                    "\nVictory Points: " + finalMonstersInGame.get(turn).getVictoryPoints() +
+                    "\nEnergy Cubes: " + finalMonstersInGame.get(turn).getEnergyCubes() +
+                    "\nIn Tokyo: " + finalMonstersInGame.get(turn).getMonsterLocation());
 
             boolean removeFlag = true;
             for (int i = 0; i < finalMonstersInGame.size(); i++) {
                 if (finalMonstersInGame.get(i).getHealth() <= 0) {
                     System.out.println(finalMonstersInGame.get(i).getName() + " has been eliminated");
-                    for (PowerCard p : finalMonstersInGame.get(i).getPlayerDeck()) {
-                            if (p.getPowerCardName().equals("It Has a Child")) {
-                                System.out.println(finalMonstersInGame.get(i).getName() + " has been revived!");
-                                finalMonstersInGame.get(i).getPlayerDeck().clear();
-                                finalMonstersInGame.get(i).setVictoryPoints(0);
-                                finalMonstersInGame.get(i).setHealth(0);
-                                removeFlag = false;
-                            }
-                            deck.addPowerCard(finalMonstersInGame.get(i).getPlayerDeck().remove(
-                                    finalMonstersInGame.get(i).getPlayerDeck().indexOf(p)));
+                    for (int j = 0; j < finalMonstersInGame.get(i).getPlayerDeck().size(); j++) { //I added a fix for adding powercards
+                        if (finalMonstersInGame.get(i).getPlayerDeck().get(j).getPowerCardName().equals("It Has a Child")) {
+                            System.out.println(finalMonstersInGame.get(i).getName() + " has been revived!");
+                            finalMonstersInGame.get(i).getPlayerDeck().clear();
+                            finalMonstersInGame.get(i).setVictoryPoints(0);
+                            finalMonstersInGame.get(i).setHealth(0);
+                            //Re-enter into deck
+                            removeFlag = false;
+                        }
+
+//                            deck.addPowerCard(finalMonstersInGame.get(i).getPlayerDeck().remove(
+//                                    finalMonstersInGame.get(i).getPlayerDeck().get(j))))))))))
+                        deck.addPowerCard(finalMonstersInGame.get(i).getPlayerDeck().remove(j)); //I think I fixed the bug
                     }
                     if (removeFlag) {
                         energyPool = energyPool + finalMonstersInGame.get(i).getEnergyCubes();
@@ -439,15 +478,271 @@ public class PlayGame {
             for (int i = 0; i < finalMonstersInGame.size(); i++) {
                 System.out.println(finalMonstersInGame.get(i).getName() + " has " + finalMonstersInGame.get(i).getHealth() + " health");
             }
-            if (turn == finalMonstersInGame.size() - 1) {
+
+            //If the array list size for monsters is 1 that means the last player is alive and wins
+            if (finalMonstersInGame.size() == 1) {
+                System.out.println("Congratulations! " + finalMonstersInGame.get(0).getName() + " you won!");
+                break;
+            }
+            if (finalMonstersInGame.get(turn).getVictoryPoints() >= 20) {
+                System.out.println("Congratulations! " + finalMonstersInGame.get(0).getName() + " you won!");
+                break;
+            }
+
+            /* ~ 4. Buy Power Cards ~ */
+            // Prompt them to buy power cards. Power cards go into effect immediately
+            // 3 face up cards at all times, immediately replaced, buy one at a time
+
+            System.out.println("Entering Power Card Shop!");
+
+
+            while (true){
+                System.out.println("Current Energy cubes: " + finalMonstersInGame.get(turn).getEnergyCubes());
+                // Displaying faceUpCards
+                for (int i = 0; i < faceUpCards.size(); i++) {
+                    System.out.println(i + 1 + ": " + faceUpCards.get(i).getPowerCardName() +
+                            ". Cost: " + faceUpCards.get(i).getPowerCardCost() + " Type: " +
+                            faceUpCards.get(i).getPowerCardType() + " Effect: " + faceUpCards.get(i).getPowerCardAbility());
+                }
+                System.out.println("Select a card from the face up pile: 1-3, select 4 to refresh cards for 2 energy, " +
+                        "or 5 to exit the shop.");
+                // Deal power cards to be face up & display them
+
+                // Check input in range
+                int cardSelection = Integer.parseInt(getInput(5));
+                switch(cardSelection){
+                    case 1:
+                        // Buy first card
+                        if(finalMonstersInGame.get(turn).getEnergyCubes() >= faceUpCards.get(0).getPowerCardCost()){
+                            System.out.println("Buying " + faceUpCards.get(0).getPowerCardName());
+                            // Updating energy cubes of player
+                            finalMonstersInGame.get(turn).setEnergyCubes(finalMonstersInGame.get(turn).getEnergyCubes()
+                                    - faceUpCards.get(0).getPowerCardCost());
+                            // Player buys the card, removes from faceUpCards & adds to player's cards arrlist
+                            finalMonstersInGame.get(turn).getPlayerDeck().add(faceUpCards.remove(0));
+                            // Replacing faceUpCard purchased
+                            faceUpCards.add(deck.dealPowerCard());
+                        }
+                        else{
+                            System.out.println("You do not have enough energy cubes.");
+                        }
+                        break;
+
+                    case 2:
+                        // Buy second card
+                        if(finalMonstersInGame.get(turn).getEnergyCubes() >= faceUpCards.get(1).getPowerCardCost()){
+                            System.out.println("Buying " + faceUpCards.get(1).getPowerCardName());
+                            // Updating energy cubes of player
+                            finalMonstersInGame.get(turn).setEnergyCubes(finalMonstersInGame.get(turn).getEnergyCubes()
+                                    - faceUpCards.get(1).getPowerCardCost());
+                            // Player buys the card, removes from faceUpCards & adds to player's cards arrlist
+                            finalMonstersInGame.get(turn).getPlayerDeck().add(faceUpCards.remove(1));
+                            // Replacing faceUpCard purchased
+                            faceUpCards.add(deck.dealPowerCard());
+                        }
+                        else{
+                            System.out.println("You do not have enough energy cubes.");
+                        }
+                        break;
+
+                    case 3:
+                        // Buy third card
+                        if(finalMonstersInGame.get(turn).getEnergyCubes() >= faceUpCards.get(2).getPowerCardCost()){
+                            System.out.println("Buying " + faceUpCards.get(2).getPowerCardName());
+                            // Updating energy cubes of player
+                            finalMonstersInGame.get(turn).setEnergyCubes(finalMonstersInGame.get(turn).getEnergyCubes()
+                                    - faceUpCards.get(2).getPowerCardCost());
+                            // Player buys the card, removes from faceUpCards & adds to player's cards arrlist
+                            finalMonstersInGame.get(turn).getPlayerDeck().add(faceUpCards.remove(2));
+                            // Replacing faceUpCard purchased
+                            faceUpCards.add(deck.dealPowerCard());
+                        }
+                        else{
+                            System.out.println("You do not have enough energy cubes.");
+                        }
+                        break;
+
+                    case 4:
+                        // Refresh faceUpCards, discard faceup cards, and deal 3 more from the deck
+                        if(finalMonstersInGame.get(turn).getEnergyCubes() >= 2) {
+                            finalMonstersInGame.get(turn).setEnergyCubes(finalMonstersInGame.get(turn).getEnergyCubes() - 2);
+                            deck.addPowerCard(faceUpCards.remove(0));
+                            deck.addPowerCard(faceUpCards.remove(0));
+                            deck.addPowerCard(faceUpCards.remove(0));
+                            faceUpCards.add(deck.dealPowerCard());
+                            faceUpCards.add(deck.dealPowerCard());
+                            faceUpCards.add(deck.dealPowerCard());
+                        }
+                        else{
+                            System.out.println("You do not have enough energy cubes.");
+                        }
+                        break;
+
+                    case 5:
+                        // Quit buying power cards
+                        System.out.println("Exiting Power Card shop.");
+                        // Breaks out of the while loop when user enters 4
+                        break;
+                }
+                if (cardSelection == 5){
+                    // Break out of while loop
+                    break;
+                }
+            }
+
+            // Displaying the player's current PowerCards
+            System.out.println("Displaying " + finalMonstersInGame.get(turn).getName() + "\'s kept Power Cards.");
+            for (int i = 0; i < finalMonstersInGame.get(turn).getPlayerDeck().size(); i++) {
+                System.out.println(finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardName() + ": " +
+                        finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardAbility());
+            }
+
+            // TODO: Hunter
+            // Immediately use Discard type cards
+            for (int i = 0; i < finalMonstersInGame.get(turn).getPlayerDeck().size(); i++) {
+                // Select Discard types & display, then use and discard back to deck
+                if (finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardType().equals("Discard")){
+                    System.out.println(finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardName() + ": " +
+                            finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardAbility());
+                    System.out.println("Playing card: " +
+                            finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardName() + "\nEffect: " +
+                            finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardAbility());
+
+                    // Special Case for Frenzy:
+                    if (finalMonstersInGame.get(turn).getPlayerDeck().get(i).getPowerCardName().equals("Frenzy")){
+                        turn--;
+                    }
+                    // Lookup table for Discard cards:
+                    tempPowerCard(finalMonstersInGame, finalMonstersInGame.get(turn), finalMonstersInGame.get(turn).getPlayerDeck().get(i));
+                    // Discard the card back into the main deck
+                    deck.addPowerCard(finalMonstersInGame.get(turn).getPlayerDeck().remove(i));
+                }
+            }
+
+            System.out.println(finalMonstersInGame.get(turn).getName() + "'s current stats: " + "\nHealth: " + finalMonstersInGame.get(turn).getHealth() +
+                    "\nVictory Points: " + finalMonstersInGame.get(turn).getVictoryPoints() +
+                    "\nEnergy Cubes: " + finalMonstersInGame.get(turn).getEnergyCubes() +
+                    "\nIn Tokyo: " + finalMonstersInGame.get(turn).getMonsterLocation());
+
+            //If the array list size for monsters is 1 that means the last player is alive and wins
+            if (finalMonstersInGame.size() == 1) {
+                System.out.println("Congratulations! " + finalMonstersInGame.get(0).getName() + " you won!");
+                break;
+            }
+            if (finalMonstersInGame.get(turn).getVictoryPoints() >= 20) {
+                System.out.println("Congratulations! " + finalMonstersInGame.get(0).getName() + " you won!");
+                break;
+            }
+
+            // Changing turns
+            if (turn == finalMonstersInGame.size() - 1){
                 turn = 0;
             }
-            else {
+            else{
                 turn++;
             }
-        }
+            // End of the loop
 
-    } //END OF MAIN
+
+        }
+    }
+
+    // List of all power card abilities
+    public static void tempPowerCard(ArrayList<Monster> finalMonstersInGame, Monster player, PowerCard card){
+        switch (card.getPowerCardName()){
+            case "Amusement Park":
+                player.setVictoryPoints(player.getVictoryPoints() + 4);
+                break;
+            case "Army":
+                player.setVictoryPoints(player.getVictoryPoints() + 1);
+                for (PowerCard p : player.getPlayerDeck()){
+                    player.setHealth(player.getHealth() - 1);
+                }
+                break;
+            case "Apartment Building":
+                player.setVictoryPoints(player.getVictoryPoints() + 3);
+                break;
+            case "Commuter Train":
+                player.setVictoryPoints(player.getVictoryPoints() + 2);
+                break;
+            case "Corner Store":
+                player.setVictoryPoints(player.getVictoryPoints() + 1);
+                break;
+            case "Drop from High Altitude":
+                player.setVictoryPoints(player.getVictoryPoints() + 2);
+                player.setMonsterLocation(true);
+                break;
+            case "Energize":
+                player.setVictoryPoints(player.getVictoryPoints() + 9);
+                break;
+            case "Evacuation Orders":
+                for (Monster m : finalMonstersInGame) {
+                    if (m.getName() != player.getName() && m.getVictoryPoints() > 5) {
+                        m.setVictoryPoints(m.getVictoryPoints() - 5);
+                    }
+                    else{
+                        m.setVictoryPoints(0);
+                    }
+                }
+                break;
+            case "Fire Blast":
+                for (Monster m : finalMonstersInGame) {
+                    if (m.getName() != player.getName() && m.getVictoryPoints() > 2){
+                        m.setVictoryPoints(m.getVictoryPoints() - 2);
+                    }
+                    else{
+                        m.setVictoryPoints(0);
+                    }
+                }
+                break;
+            case "Frenzy":
+                // TODO: Take another turn immediately after this card is played
+                break;
+            case "Gas Refinery":
+                player.setVictoryPoints(player.getVictoryPoints() + 2);
+                for (Monster m : finalMonstersInGame) {
+                    if (m.getName() != player.getName()){
+                        m.setHealth(m.getHealth() - 3);
+                    }
+                }
+                break;
+            case "Heal":
+                player.setHealth(player.getHealth() + 2);
+                break;
+            case "High Altitude Bombing":
+                for (Monster m : finalMonstersInGame) {
+                    m.setHealth(m.getHealth() - 3);
+                }
+                break;
+            case "Jet Fighters":
+                player.setVictoryPoints(player.getVictoryPoints() + 5);
+                player.setHealth(player.getHealth() - 4);
+                break;
+            case "National Guard":
+                player.setVictoryPoints(player.getVictoryPoints() + 2);
+                player.setHealth(player.getHealth() - 2);
+                break;
+            case "Nuclear Power Plant":
+                player.setVictoryPoints(player.getVictoryPoints() + 2);
+                player.setHealth(player.getHealth() + 3);
+                break;
+            case "Skyscraper":
+                player.setVictoryPoints(player.getVictoryPoints() + 4);
+                break;
+            case "Tanks":
+                player.setVictoryPoints(player.getVictoryPoints() + 4);
+                player.setHealth(player.getHealth() - 3);
+                break;
+            case "Vast Storm":
+                player.setVictoryPoints(player.getVictoryPoints() + 2);
+                for (Monster m : finalMonstersInGame) {
+                    if (m.getName() != player.getName()){
+                        m.setEnergyCubes((int) Math.ceil(m.getEnergyCubes() / 2));
+                    }
+                }
+                break;
+        }
+    }
 
     public static boolean isNumber(String userInput) {
         try {
@@ -480,3 +775,5 @@ public class PlayGame {
         return input;
     }
 }
+
+
